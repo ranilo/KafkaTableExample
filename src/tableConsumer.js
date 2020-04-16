@@ -4,6 +4,7 @@ const { KafkaStreams } = require("kafka-streams");
 const _ = require('lodash');
 const path = require('path');
 const router = express.Router();
+const fetch = require('node-fetch');
 
 const config = {
     "noptions": {
@@ -47,16 +48,21 @@ kafkaStreams.on("error", (error) => console.error("stream error", error));
 
 const toKv = message => {
     const value = message.value.toString("utf8");
-    const elements = JSON.parse(value);
-    return {
-        key: 'val',
-        value: elements.val
-    };
+    console.log('event in table', value);
+    try {
+        const elements = JSON.parse(value);
+        return {
+            key: elements.key,
+            value: elements.value
+        };
+    } catch (err) {
+        console.error('error', err);
+    }
 };
 
 const table = kafkaStreams.getKTable(topic, toKv);
-table.consumeUntilCount(100, () => {
-    console.log("topic has been consumed until count of 100 messages.");
+table.consumeUntilCount(200, () => {
+    table.getTable().then((map) => console.log('consume Until Count, stream will close', map))
 });
 table.start().then(() => {
     console.log("table stream started, as kafka consumer is ready.");
@@ -73,6 +79,20 @@ router.get('/cons', (req, res) => {
         res.send(map)
     })
 })
+
+router.get('/async', (req, res) => {
+    fetch(`http://localhost:3000/pub?val=${req.query.val}`)
+        .then(res => res.text())
+        .then(body => console.log('got from call', body))
+        .then(() => {
+            setTimeout((args) => {
+                args.table.getTable().then(map => {
+                    args.res.send(map)
+                })
+            }, 1500, {table: table, res: res})
+        })
+})
+
 router.get('/', (req, res) => res.sendFile((path.join(__dirname + '/index.html'))))
 
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
