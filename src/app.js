@@ -37,7 +37,7 @@ app.use('/', router);
 const port = 3000
 
 router.get('/pub', (req, res) => {
-    const statuses = ['got', 'started', 'processing', 'finished'];
+    const statuses = ['started', 'processing', 'finished'];
     statuses.forEach((status) => {
         const payloads = [
             {
@@ -50,7 +50,7 @@ router.get('/pub', (req, res) => {
         ];
         publish(producer, payloads)
     })
-    res.send('ok')
+    res.status(200).send('ok')
 })
 router.get('/', (req, res) => res.sendFile((path.join(__dirname + '/index.html'))))
 

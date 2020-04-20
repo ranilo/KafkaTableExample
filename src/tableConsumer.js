@@ -89,7 +89,7 @@ router.get('/async', (req, res) => {
                 args.table.getTable().then(map => {
                     args.res.send(map)
                 })
-            }, 1500, {table: table, res: res})
+            }, 500, {table: table, res: res})
         })
 })
 
