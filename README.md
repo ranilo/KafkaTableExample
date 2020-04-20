@@ -1,7 +1,7 @@
 # KafkaTableExample
 Kafka table example
  
-##2 node services:
+## 2 node services:
 _app.js_
 Publish (and subscribe) to a topic1 that creates a set of events for each GET request sent to :3000/pub?val={payload}
  
