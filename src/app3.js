@@ -56,10 +56,6 @@ const publishMessages = (start, leap, loop) => {
     }
 }
 
-// router.get('/pub', (req, res) => {
-//     publishMessages(1, 2, true);
-//     res.status(200).send('ok')
-// })
 
 router.get('/stat', (req, res) => {
     
@@ -73,7 +69,7 @@ router.get('/stat', (req, res) => {
 router.get('/', (req, res) => res.sendFile((path.join(__dirname + '/index.html'))))
 
 consumer.on('message', (message) => {
-    console.log("Consume", message);
+    console.log(`value ${JSON.parse(message.value).value}`, `offset ${message.offset}`, `high Water Offset ${message.highWaterOffset}`);
 })
 
 consumer.on('error', (message) => {
