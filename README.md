@@ -13,5 +13,8 @@ Creates a simple table for the {payload} and holds the latest status as the valu
 Running local Kafka:
 > zkserver
 > .\bin\windows\kafka-server-start.bat .\config\server.properties
+
+
+using c:\work\POC\cp-all-in-one\cp-all-in-one>docker-compose up -d
  
  
