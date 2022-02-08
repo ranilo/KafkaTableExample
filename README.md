@@ -17,7 +17,18 @@ Running local Kafka:
 
 using c:\work\POC\cp-all-in-one\cp-all-in-one>docker-compose up -d
 
+list topics on broker
+docker exec -it broker1B /bin/bash
+kafka-topics --bootstrap-server broker1A:29092 --list
 
-node src/app3.js step kafka-host kafka-port
+start miror maker
+docker exec -it mirror-maker /bin/bash
+connect-mirror-maker /tmp/kafka/config/mm2.properties
+
+node src/app3.js step kafka-host kafka-port other-cluster-initial
+node src/app3.js 1 localhost 9092 B
+node src/app3.js 2 localhost 8092 A
+
+
  
  

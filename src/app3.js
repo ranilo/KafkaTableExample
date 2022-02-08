@@ -41,7 +41,7 @@ const app = express()
 app.use('/', router);
 
 const publishMessages = (start, leap, loop) => {
-    const statuses = [start, start + leap, start + (leap * 2)];
+    const statuses = [start];
     statuses.forEach((status) => {
         const payloads = [
             {
@@ -55,7 +55,7 @@ const publishMessages = (start, leap, loop) => {
         publish(producer, payloads)
     })
     if (loop) {
-        setTimeout(() => { publishMessages(statuses[2] + leap, leap, loop); }, 10000);
+        setTimeout(() => { publishMessages(statuses[statuses.length-1] + leap, leap, loop); }, 10000);
     }
 }
 
