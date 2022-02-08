@@ -8,23 +8,28 @@ const router = express.Router();
 const topic = 'topic1';
 let kafkaHost = process.argv[3] || 'localhost';
 let kafkaPort = process.argv[4] || '9092';
-let cluster = `cluster${process.argv[5] || A}`;
+let cluster = process.argv[5] ? `cluster${process.argv[5]}` : null;
 const port = 300 + process.argv[2]
 
 
 const Producer = kafka.Producer,
     KeyedMessage = kafka.KeyedMessage,
     client = new kafka.KafkaClient({ kafkaHost: `${kafkaHost}:${kafkaPort}` });
-const producer = new Producer(client)
+const producer = new Producer(client);
+let topicList = [
+    { topic: topic, partition: 0 }
+];
+if (cluster) {
+    topicList.push(
+        { topic: `${cluster}.${topic}`, partition: 0 }
+    )
+}
 
 
 const Consumer = kafka.Consumer,
     consumer = new Consumer(
         client,
-        [
-            { topic: topic, partition: 0 },
-            { topic: `${cluster}.${topic}`, partition: 0 }
-        ],
+        topicList,
         {
             autoCommit: true
         }
@@ -55,7 +60,7 @@ const publishMessages = (start, leap, loop) => {
         publish(producer, payloads)
     })
     if (loop) {
-        setTimeout(() => { publishMessages(statuses[statuses.length-1] + leap, leap, loop); }, 10000);
+        setTimeout(() => { publishMessages(statuses[statuses.length - 1] + leap, leap, loop); }, 10000);
     }
 }
 
