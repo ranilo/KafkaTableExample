@@ -16,5 +16,8 @@ Running local Kafka:
 
 
 using c:\work\POC\cp-all-in-one\cp-all-in-one>docker-compose up -d
+
+
+node src/app3.js step kafka-host kafka-port
  
  
