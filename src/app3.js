@@ -2,7 +2,6 @@ const express = require('express')
 const kafka = require('kafka-node')
 const _ = require('lodash');
 const path = require('path');
-// const { consume } = require('./consumer');
 const router = express.Router();
 
 const topic = 'topic1';
@@ -21,7 +20,8 @@ let topicList = [
 ];
 if (cluster) {
     topicList.push(
-        { topic: `${cluster}.${topic}`, partition: 0 }
+        { topic: `${cluster}.${topic}`, partition: 0 },
+        // { topic: `${cluster}.heartbeats`, partition: 0 },
     )
 }
 
@@ -85,7 +85,7 @@ router.get('/start', (req, res) => {
 router.get('/', (req, res) => res.sendFile((path.join(__dirname + '/index.html'))))
 
 consumer.on('message', (message) => {
-    console.log(`value ${JSON.parse(message.value).value}`, `topic ${message.topic}`, `offset ${message.offset}`, `high Water Offset ${message.highWaterOffset}`);
+    consumer.commit((e,d)=>{console.log("commit",`value ${JSON.parse(message.value).value}`, `topic ${message.topic}`, `offset ${message.offset}`, `error: ${e}`, `data: ${d}`)});
 })
 
 consumer.on('error', (message) => {
